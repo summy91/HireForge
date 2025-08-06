@@ -71,6 +71,7 @@ def score_resumes_by_job_description(resumes, job_description):
           "name": "...",
           "email": "...",
           "score": "...",
+          "skills": ["...", "..."],
           "justification": "..."
         }}
 
@@ -95,6 +96,7 @@ def score_resumes_by_job_description(resumes, job_description):
                 "name": parsed.get("name", ""),
                 "email": parsed.get("email", ""),
                 "score": parsed.get("score", 0),
+                "skills":parsed.get("skills", []),
                 "justification": parsed.get("justification", "")
             })
         except Exception as e:

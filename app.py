@@ -6,11 +6,23 @@ from typing import TypedDict, List
 from typing_extensions import Annotated
 from claude_parser import extract_resume_info_with_claude
 from match_resume import rank_resumes_by_job_description, get_embedding, score_resumes_by_job_description
+from sendemail import send_candidate_interview_email, send_candidate_ranking_email
 import  json
 import os
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = "sample_data"
+
+# Load SMTP configuration from config file
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+# Extract configuration values
+sender_email = config['sender_email']
+smtp_server = config['smtp_server']
+smtp_port = config['smtp_port']
+username = config['username']
+password = config['password']
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -141,8 +153,15 @@ def score():
 
         final_state = graph_score.invoke(state_input)
         ranked = final_state.get("ranked_resumes", [])
+        send_candidate_ranking_email(ranked,sender_email=sender_email,
+                                     hireforgeHR_email="ajitdkakde@gmail.com",
+                                     smtp_server=smtp_server,
+                                     smtp_port=smtp_port, 
+                                     username=username,
+                                     password=password)
         print("ranked:", json.dumps(ranked, indent=2))
 
+        session["ranked_resumes"] = ranked
         # Optional: save to session
         # session["ranked_resumes"] = ranked
 
@@ -150,7 +169,36 @@ def score():
 
     except Exception as e:
         return f"Error: {str(e)}", 500
+    
+@app.route('/send_email', methods=['POST'])
+def sendMail():
+    print("Session inside /send_email:", dict(session))
+    try:
+        name = request.form['name']
+        candidate_email = request.form['email']
+        send_candidate_interview_email(name=name,candidate_email=candidate_email,sender_email=sender_email,
+               smtp_server=smtp_server,
+               smtp_port=smtp_port, 
+               username=username,
+               password=password)
+        
+        print("Email Sent Successfully")
+        # Return the same page with a flag
+        
+        results = session.get("ranked_resumes", [])
+        for item in results:
+          if item['email'] == candidate_email:
+             item['scheduled'] = True  # Add a flag to indicate scheduling
 
+        # Save updated results back to session (outside the loop)
+        session["ranked_resumes"] = results
+        session.modified = True
+
+        # Print for debugging
+        print("ranked resumes:", json.dumps(results, indent=2))
+        return render_template('upload.html', results=results, scored=True)
+    except Exception as e:
+        return f"Error: {str(e)}", 500
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
