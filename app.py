@@ -23,6 +23,7 @@ smtp_server = config['smtp_server']
 smtp_port = config['smtp_port']
 username = config['username']
 password = config['password']
+hireforgeHR_email= config['hireforgeHR_email']
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -154,7 +155,7 @@ def score():
         final_state = graph_score.invoke(state_input)
         ranked = final_state.get("ranked_resumes", [])
         send_candidate_ranking_email(ranked,sender_email=sender_email,
-                                     hireforgeHR_email="ajitdkakde@gmail.com",
+                                     hireforgeHR_email=hireforgeHR_email,
                                      smtp_server=smtp_server,
                                      smtp_port=smtp_port, 
                                      username=username,
