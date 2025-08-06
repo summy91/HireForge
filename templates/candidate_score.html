@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {{
+      font-family: Arial, sans-serif;
+    }}
+    h2 {{
+      color: #2F4F4F;
+    }}
+    table {{
+      width: 100%;
+      border-collapse: collapse;
+    }}
+    th, td {{
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }}
+    th {{
+      background-color: #f2f2f2;
+    }}
+    .status-pass {{
+      color: green;
+      font-weight: bold;
+    }}
+    .status-review {{
+      color: orange;
+      font-weight: bold;
+    }}
+    .status-reject {{
+      color: red;
+      font-weight: bold;
+    }}
+  </style>
+</head>
+<body>
+  <h2>Candidate Score Report</h2>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Score</th>
+      <th>Email</th>
+      <th>Top Skills</th>
+      <th>Status</th>
+    </tr>
+    {table_rows}
+  </table>
+</body>
+</html>
