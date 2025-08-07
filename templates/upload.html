@@ -1,80 +1,190 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Upload Resumes</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Recruitment Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#uploadFiles').on('click', function () {
+                $('#loader').html('<p> loading results....please wait</p>');
+
+                const form = $('#file-upload-form')[0];
+                const formData = new FormData(form);
+                $('#rankingResponse').html('');
+                $('#progress-bar').css('width', '50%');
+
+
+                $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,  // Important!
+                    contentType: false,  // Important!
+                    success: function (response) {
+                        $('#rankingResponse').html(response);
+                        $('#loader').html('<p> </p>');
+                        $('button[id="uploadFiles"]').attr('disabled','disabled');
+                        $('button[id="scoreButton"]').removeAttr('disabled');
+                        $('#progress-bar').css('width', '100%');
+                    },
+                    error: function () {
+                        $('#rankingResponse').html('<p>Upload failed. Please try again.</p>');
+                        $('#loader').html('<p> </p>');
+                        $('#progress-bar').css('width', '0%');
+                    }
+                });
+            });
+
+            $('#scoreButton').on('click', function () {
+                $('#loader').html('<p> Processing score....please wait</p>');
+                $('button[id="scoreButton"]').attr('disabled','disabled');
+
+                $.ajax({
+                    url: '/score',
+                    type: 'POST',
+                    data: [],
+                    processData: false,  // Important!
+                    contentType: false,  // Important!
+                    success: function (response) {
+                        $('#scoringResponse').html(response);
+                        $('#loader').html('<p> </p>');
+                    },
+                    error: function () {
+                        $('#scoringResponse').html('<p>Error processing score. Please try again.</p>');
+                        $('#loader').html('<p> </p>');
+                    }
+                });
+            });
+
+            $(document).on('click', '.interviewButton', function () {
+                $('#emailProcessing').html('<p> Sending email....please wait</p>');
+
+                const $form = $(this).closest('form')[0];
+                const formData = new FormData($form);
+
+                console.log(formData, 'formData');
+
+                $('#scoringResponse').html('');
+
+                $.ajax({
+                    url: '/send_email',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,  // Important!
+                    contentType: false,  // Important!
+                    success: function (response) {
+                        $('#scoringResponse').html(response);
+                        $('#emailProcessing').html('<p> </p>');
+                    },
+                    error: function () {
+                        $('#emailProcessing').html('<p> Something went wrong ...Please try again.</p>');
+                    }
+                });
+            });
+        });
+    </script>
 </head>
-<body class="bg-gray-50 py-10 px-6">
-  <div class="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-    <h2 class="text-2xl font-bold mb-4">Upload Resumes for Screening</h2>
+<body>
+    <nav class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item active">
+                <span>📊 Home</span>
+            </li>
+            <!-- <li class="sidebar-item">
+                <span>📝 Job Descriptions</span>
+            </li>
+            <li class="sidebar-item">
+                <span>📄 Resume Analyzer</span>
+            </li>
+            <li class="sidebar-item">
+                <span>👥 Candidate Ranking</span>
+            </li>
+            <li class="sidebar-item">
+                <span>📊 Bias Insights</span>
+            </li>
+            <li class="sidebar-item">
+                <span>🤖 AI Assistant</span>
+            </li> -->
+        </ul>
+    </nav>
 
-    <!-- Upload Form -->
-    <form action="/upload" method="post" enctype="multipart/form-data" class="space-y-4">
-      <input type="file" name="resumes" multiple accept=".pdf,.doc,.docx"
-             class="block w-full text-sm text-gray-700 border rounded-md p-2">
-
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Upload and Analyze
-      </button>
-    </form>
-
-    <!-- Show parsed resumes only -->
-    {% if results and not scored %}
-      <h2 class="mt-6 text-xl font-semibold">Parsed Resumes</h2>
-      <ul class="mt-2 space-y-4">
-        {% for r in results %}
-          <li class="border p-4 rounded">
-            <h3 class="font-bold">{{ r.name or r.filename }}</h3>
-            <p><strong>Email:</strong> {{ r.email }}</p>
-            <p><strong>Phone:</strong> {{ r.phone }}</p>
-            <p><strong>Experience:</strong> {{ r.experience_years }} years</p>
-            <p><strong>Skills:</strong> {{ r.skills | join(', ') }}</p>
-            <p><strong>Previous Roles:</strong> {{ r.previous_roles | join(', ') }}</p>
-            <p><strong>Company:</strong> {{ r.last_company }}</p>
-            <p><strong>Education:</strong> {{ r.education | join(', ') }}</p>
-          </li>
-        {% endfor %}
-      </ul>
-
-      <!-- Score Form -->
-      <form action="/score" method="post" class="mt-6">
-        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-          Process Score
-        </button>
-      </form>
-    {% endif %}
-
-
-    <!-- Show scored resumes -->
-    {% if results and scored %}
-      <h2 class="mt-6 text-xl font-semibold">Scored Resumes</h2>
-      <ul class="mt-2 space-y-4">
-        {% for item in results %}
-          <li class="border p-4 rounded">
-            <strong>{{ item.name }}</strong><br>
-            <span>Score: {{ item.score }}</span><br>
-            <span>Email: {{ item.email }}</span><br>
-            <span>Reason: {{ item.justification  }}</span><br>
-            {% if item.scheduled %}
-            <div class="mt-2 p-2 bg-green-100 border border-green-400 text-green-700 rounded">
-                <strong>Interview has been Scheduled</strong>
+    <main class="main-content">
+        <h1>Dashboard</h1>
+        <section class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-title">Total Jobs Posted</div>
+                <div class="stat-value">5</div>
             </div>
-            {% else %}
-            <form action="/send_email" method="post">
-              <input type="hidden" name="name" value="{{ item.name }}">
-              <input type="hidden" name="email" value="{{ item.email }}">
-              <button type="submit" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
-              Schedule Interview
-             </button>
-            </form>
-          {% endif %}
-          </li>
-          
-        {% endfor %}
-      </ul>
-    {% endif %}
+            <div class="stat-card">
+                <div class="stat-title">Resumes Uploaded</div>
+                <div class="stat-value">12</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Bias Alerts</div>
+                <div class="stat-value">1</div>
+            </div>
+        </section>
+        <div class="section-1">
+        <section class="resume-analyzer">
+            <h2>Resume Analyzer</h2>
+            <!-- Upload Form -->
 
-  </div>
+
+        <div class="upload-container">
+            <form id="file-upload-form" action="/upload" method="post" enctype="multipart/form-data" class="uploader">
+            <input id="file-upload" type="file" name="resumes" multiple accept=".pdf,.doc,.docx" title="Click here to browse the file" />
+            <label for="file-upload" id="file-drag">
+                Drag and drop resume files here, or browse
+                <button id="uploadFiles" type="button">Upload Files</button>
+            </label>
+            </form>
+            <div id="loader"></div>
+            <div class="progress-bar-container">
+                <div id="response"></div>
+
+            <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+        <script>
+            document.querySelector('button').addEventListener('click', () => {
+            progressBar.style.width = '100%';
+            });
+        </script>
+        </div>
+        </section>
+
+        <section class="candidate-ranking">
+
+            <h1>Candidate Ranking</h1>
+            <div id="rankingResponse" class="rankingResponse">
+                {% include 'ranking.html' %}
+            </div>
+            <form action="/score" method="post" class="mt-6">
+                <div id="processScore">
+                    <button disabled id="scoreButton" type="button" class="button-primary">
+                    Process Score
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+        <section class="charts-section">
+
+            <div class="chart-container">
+
+                <h1>Top 5 Candidates - AI Resume Analysis</h1>
+                <div id="emailProcessing"></div>
+                <div id="scoringResponse" >
+                    {% include 'scoring.html' %}
+                </div>
+
+            </div>
+        </section>
+    </main>
 </body>
 </html>

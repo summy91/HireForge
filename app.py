@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template, session
-from flask_session import Session
 from parse_resume import parse_pdf_resume
 from langgraph.graph import StateGraph
 from typing import TypedDict, List
@@ -10,6 +9,7 @@ from sendemail import send_candidate_interview_email, send_candidate_ranking_ema
 import  json
 import os
 from werkzeug.utils import secure_filename
+from flask_session import Session
 
 UPLOAD_FOLDER = "sample_data"
 
@@ -138,7 +138,7 @@ def upload():
         session.modified = True
 
         print("Final parsed resumes going into session:", parsed)
-        return render_template('upload.html', results=parsed)
+        return render_template('ranking.html', results=parsed)
 
 
     except Exception as e:
@@ -166,7 +166,7 @@ def score():
         # Optional: save to session
         # session["ranked_resumes"] = ranked
 
-        return render_template("upload.html", results=ranked, scored=True)
+        return render_template("scoring.html", results=ranked, scored=True)
 
     except Exception as e:
         return f"Error: {str(e)}", 500
@@ -197,7 +197,7 @@ def sendMail():
 
         # Print for debugging
         print("ranked resumes:", json.dumps(results, indent=2))
-        return render_template('upload.html', results=results, scored=True)
+        return render_template('scoring.html', results=results, scored=True)
     except Exception as e:
         return f"Error: {str(e)}", 500
 

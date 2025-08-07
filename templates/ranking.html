@@ -1,0 +1,34 @@
+<div>
+    {% if results and not scored %}
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                  <th>Phone</th>
+                <th>Top Skills</th>
+                <th>Experience</th>
+                <th>Prev. Roles</th>
+                  <th>Company</th>
+                  <th>Education</th>
+              </tr>
+            </thead>
+            <tbody>
+             {% for r in results %}
+              <tr>
+                <td>{{ r.name or r.filename }}</td>
+                <td>{{ r.email }}</td>
+                  <td>{{ r.phone }}</td>
+                <td>{{ r.skills | join(', ') }}</td>
+                <td>{{ r.experience_years }} years</td>
+                <td>{{ r.previous_roles | join(', ') }}</td>
+              <td>{{ r.last_company }}</td>
+              <td>{{ r.education | join(', ') }}</td>
+              </tr>
+             {% endfor %}
+
+            </tbody>
+          </table>
+
+    {% endif %}
+</div>
