@@ -1,0 +1,40 @@
+<td>
+    {% if results and scored %}
+          <table class="top-candidate-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Email</th>
+                <th>Reason for Best Fit</th>
+                  <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for item in results %}
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.score }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.justification  }}</td>
+              {% if item.scheduled %}
+            <td>
+                <strong>Interview has been Scheduled</strong>
+            </td>
+            {% else %}
+                  <td>
+                    <form id="send-email-form" action="/send_email" method="post">
+                      <input type="hidden" name="name" value="{{ item.name }}">
+                      <input type="hidden" name="email" value="{{ item.email }}">
+                      <button class="interviewButton" id="interviewButton" type="button" >
+                      Schedule Interview
+                     </button>
+                    </form>
+                  </td>
+          {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+       {% endif %}
+</div>

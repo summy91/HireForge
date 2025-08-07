@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Resumes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 py-10 px-6">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
+    <h2 class="text-2xl font-bold mb-4">Upload Resumes for Screening</h2>
+
+    <!-- Upload Form -->
+    <form action="/upload" method="post" enctype="multipart/form-data" class="space-y-4">
+      <input type="file" name="resumes" multiple accept=".pdf,.doc,.docx"
+             class="block w-full text-sm text-gray-700 border rounded-md p-2">
+
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Upload and Analyze
+      </button>
+    </form>
+
+    <!-- Show parsed resumes only -->
+    {% if results and not scored %}
+      <h2 class="mt-6 text-xl font-semibold">Parsed Resumes</h2>
+      <ul class="mt-2 space-y-4">
+        {% for r in results %}
+          <li class="border p-4 rounded">
+            <h3 class="font-bold">{{ r.name or r.filename }}</h3>
+            <p><strong>Email:</strong> {{ r.email }}</p>
+            <p><strong>Phone:</strong> {{ r.phone }}</p>
+            <p><strong>Experience:</strong> {{ r.experience_years }} years</p>
+            <p><strong>Skills:</strong> {{ r.skills | join(', ') }}</p>
+            <p><strong>Previous Roles:</strong> {{ r.previous_roles | join(', ') }}</p>
+            <p><strong>Company:</strong> {{ r.last_company }}</p>
+            <p><strong>Education:</strong> {{ r.education | join(', ') }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <!-- Score Form -->
+      <form action="/score" method="post" class="mt-6">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          Process Score
+        </button>
+      </form>
+    {% endif %}
+
+
+    <!-- Show scored resumes -->
+    {% if results and scored %}
+      <h2 class="mt-6 text-xl font-semibold">Scored Resumes</h2>
+      <ul class="mt-2 space-y-4">
+        {% for item in results %}
+          <li class="border p-4 rounded">
+            <strong>{{ item.name }}</strong><br>
+            <span>Score: {{ item.score }}</span><br>
+            <span>Email: {{ item.email }}</span><br>
+            <span>Reason: {{ item.justification  }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+  </div>
+</body>
+</html>

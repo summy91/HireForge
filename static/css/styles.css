@@ -1,0 +1,315 @@
+/* Main styles */
+:root {
+  --primary-blue: #0a192f;
+  --accent-blue: #1e3a8a;
+  --text-light: #ffffff;
+  --text-dark: #1a1a1a;
+  --gray-light: #f3f4f6;
+  --border-color: #e5e7eb;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 200px;
+  background-color: var(--primary-blue);
+  color: var(--text-light);
+  padding: 2rem 1rem;
+}
+
+.sidebar-menu {
+  list-style: none;
+}
+
+.sidebar-item {
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebar-item.active {
+  background-color: var(--accent-blue);
+}
+
+.sidebar-item:hover {
+  background-color: var(--accent-blue);
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: var(--gray-light);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stat-title {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+/* Resume Analyzer Section */
+.resume-analyzer {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  width: 28%;
+}
+
+
+/* Buttons */
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-color);
+  background: white;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.button-primary {
+  background: var(--accent-blue);
+  color: white;
+  border: none;
+}
+
+
+/* Charts Section */
+.charts-section {
+  /* display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem; */
+  margin-top: 12px;
+}
+
+.chart-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/*  Upload */
+
+.section-1 {
+  display: flex;
+  flex-direction: row;
+}
+.upload-container {
+  margin: 0 auto;
+  width: 50%;
+  padding-top: 2rem;
+}
+.uploader {
+  position: relative;
+}
+
+#file-upload {
+  display: none;
+}
+
+#file-drag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 200px;
+  border: 2px dashed #ccc;
+  background-color: #fff;
+  color: #666;
+  cursor: pointer;
+  padding: 20px;
+  text-align: center;
+}
+
+#file-drag button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #3b5998;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#file-drag button:hover {
+  background-color: #2d4373;
+}
+
+#file-drag button:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background-color: #3b5998;
+  transition: width 0.4s ease-in-out;
+}
+
+/*  Ranking Table */
+.candidate-ranking {
+  margin-left: 10px;
+  width: 72%;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.rankingResponse {
+  width: 100%;
+  height: 30rem;
+  overflow-y: scroll;
+}
+h1 {
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.ranking-table th,
+.ranking-table td {
+  padding: 15px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.ranking-table th {
+  background-color: #3b5998;
+  color: white;
+}
+
+.ranking-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.ranking-table tbody tr:hover {
+  background-color: #e6f7ff;
+}
+
+
+/* Top Candidate Table */ 
+
+h1 {
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.top-candidate-table {
+  width: 99%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.top-candidate-table th,
+.top-candidate-table td {
+  padding: 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.top-candidate-table th {
+  background-color: #3b5998;
+  color: white;
+}
+
+.top-candidate-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.top-candidate-table tbody tr:hover {
+  background-color: #e6f7ff;
+}
+
+#processScore button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #3b5998;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#processScore button:hover {
+  background-color: #2d4373;
+}
+
+#processScore button:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.interviewButton button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #3b5998;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.interviewButton button:hover {
+  background-color: #2d4373;
+}
+
+#emailProcessing {
+  color: #2d4373;
+  font-weight: 600;
+}
